@@ -20,6 +20,10 @@ Route::apiResource('usuarios-fiscalizacion', UsuarioFiscalizacionController::cla
 Route::patch('usuarios-fiscalizacion/{usuarioFiscalizacion}/toggle-status', [UsuarioFiscalizacionController::class, 'toggleStatus'])
     ->name('usuarios-fiscalizacion.toggle-status');
 
+// Login route
+Route::post('usuarios-fiscalizacion/login', [UsuarioFiscalizacionController::class, 'login'])
+    ->name('usuarios-fiscalizacion.login');
+
 // Profile and password update routes
 Route::put('usuarios-fiscalizacion/{usuarioFiscalizacion}/profile', [UsuarioFiscalizacionController::class, 'updateProfile'])
     ->name('usuarios-fiscalizacion.update-profile');

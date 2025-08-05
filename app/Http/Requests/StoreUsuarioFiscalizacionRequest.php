@@ -41,6 +41,10 @@ class StoreUsuarioFiscalizacionRequest extends FormRequest
             'email.email' => 'El email debe tener un formato válido.',
             'email.unique' => 'Ya existe un usuario con este email.',
             'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.mixed' => 'La contraseña debe contener mayúsculas y minúsculas.',
+            'password.numbers' => 'La contraseña debe contener al menos un número.',
+            
             'cellphone.required' => 'El teléfono celular es obligatorio.',
             'status.in' => 'El estado debe ser active o inactive.',
             'distribucion_id.required' => 'La distribución es obligatoria.',

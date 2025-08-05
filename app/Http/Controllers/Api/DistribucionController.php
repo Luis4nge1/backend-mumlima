@@ -90,9 +90,9 @@ class DistribucionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Distribucion $distribucion): JsonResponse
+    public function destroy(Distribucion $distribucione): JsonResponse
     {
-        $usuariosCount = $distribucion->usuarios()->count();
+        $usuariosCount = $distribucione->usuarios()->count();
         
         if ($usuariosCount > 0) {
             return response()->json([
@@ -101,7 +101,7 @@ class DistribucionController extends Controller
             ], 422);
         }
 
-        $distribucion->delete();
+        $distribucione->delete();
 
         return response()->json([
             'message' => 'Distribución eliminada exitosamente.'

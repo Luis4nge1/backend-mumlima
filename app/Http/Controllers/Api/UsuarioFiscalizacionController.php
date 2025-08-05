@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateUsuarioFiscalizacionRequest;
 use App\Http\Requests\UpdateUsuarioProfileRequest;
 use App\Http\Requests\UpdateUsuarioPasswordRequest;
 use App\Http\Requests\AdminUpdatePasswordRequest;
+use App\Http\Requests\LoginUsuarioFiscalizacionRequest;
 use App\Http\Resources\UsuarioFiscalizacionResource;
 use App\Models\UsuarioFiscalizacion;
 use Illuminate\Http\JsonResponse;
@@ -53,7 +54,7 @@ class UsuarioFiscalizacionController extends Controller
         $perPage = $request->get('per_page', 15);
         $usuarios = $query->paginate($perPage);
 
-        return UsuarioFiscalizacionResource::collection($usuarios->load('distribucion'));
+        return UsuarioFiscalizacionResource::collection($usuarios);
     }
 
     /**
@@ -100,9 +101,9 @@ class UsuarioFiscalizacionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UsuarioFiscalizacion $usuarioFiscalizacion): JsonResponse
+    public function destroy(UsuarioFiscalizacion $usuarios_fiscalizacion): JsonResponse
     {
-        $usuarioFiscalizacion->delete();
+        $usuarios_fiscalizacion->delete();
 
         return response()->json([
             'message' => 'Usuario eliminado exitosamente.'
@@ -178,6 +179,40 @@ class UsuarioFiscalizacionController extends Controller
             'message' => 'Contraseña restablecida exitosamente por el administrador.',
             'data' => new UsuarioFiscalizacionResource($usuarioFiscalizacion->load('distribucion')),
             'admin_action' => true
+        ]);
+    }
+
+    /**
+     * Login user with email and password to get user data.
+     */
+    public function login(LoginUsuarioFiscalizacionRequest $request): JsonResponse
+    {
+        // Buscar usuario por email
+        $usuario = UsuarioFiscalizacion::where('email', $request->email)->first();
+
+        // Verificar si el usuario existe y la contraseña es correcta
+        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
+            return response()->json([
+                'message' => 'Las credenciales proporcionadas son incorrectas.',
+                'errors' => [
+                    'email' => ['Las credenciales proporcionadas son incorrectas.']
+                ]
+            ], 401);
+        }
+
+        // Verificar si el usuario está activo
+        if ($usuario->status !== 'active') {
+            return response()->json([
+                'message' => 'La cuenta de usuario está inactiva.',
+                'errors' => [
+                    'status' => ['La cuenta de usuario está inactiva.']
+                ]
+            ], 403);
+        }
+
+        return response()->json([
+            'message' => 'Login exitoso.',
+            'data' => new UsuarioFiscalizacionResource($usuario->load('distribucion'))
         ]);
     }
 }

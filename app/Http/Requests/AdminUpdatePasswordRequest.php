@@ -40,6 +40,10 @@ class AdminUpdatePasswordRequest extends FormRequest
             'password.required' => 'La nueva contraseña es obligatoria.',
             'password.confirmed' => 'La confirmación de contraseña no coincide.',
             'password_confirmation.required' => 'La confirmación de contraseña es obligatoria.',
+
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.mixed' => 'La contraseña debe contener mayúsculas y minúsculas.',
+            'password.numbers' => 'La contraseña debe contener al menos un número.',
         ];
     }
 }

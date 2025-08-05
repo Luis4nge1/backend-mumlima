@@ -28,7 +28,7 @@ class UpdateUsuarioProfileRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('usuarios_fiscalizacion', 'email')->ignore($this->route('usuarios_fiscalizacion'))
+                Rule::unique('usuarios_fiscalizacion', 'email')->ignore($this->route('usuarioFiscalizacion'))
             ],
             'cellphone' => 'sometimes|required|string|max:20',
             'status' => 'sometimes|in:active,inactive',
