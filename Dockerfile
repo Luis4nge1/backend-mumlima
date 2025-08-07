@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Habilita mod_rewrite
-RUN a2enmod rewrite
+# Habilita módulos necesarios de Apache
+RUN a2enmod rewrite headers deflate
 
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -38,12 +38,15 @@ RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
 # Configura Apache para Cloud Run
 COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
 
-# Cloud Run usa la variable PORT para el puerto del contenedor
-ENV PORT=8080
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+# Configura Apache para Cloud Run
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Expone el puerto que Cloud Run espera
 EXPOSE 8080
 
-# Comando para iniciar Apache
-CMD ["apache2-foreground"]
+# Script de inicio personalizado para Cloud Run
+COPY start-apache.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-apache.sh
+
+# Comando para iniciar Apache con configuración dinámica
+CMD ["/usr/local/bin/start-apache.sh"]
