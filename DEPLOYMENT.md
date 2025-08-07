@@ -1,6 +1,6 @@
 # Deployment en Google Cloud Run
 
-## 📋 Pasos para desplegar desde GitHub
+## 📋 Pasos para desplegar desde GitHub en Cloud Run
 
 ### 1. **Configurar Cloud Build Trigger**
 
