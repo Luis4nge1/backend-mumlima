@@ -1,9 +1,10 @@
-# Archivos y directorios a ignorar en Cloud Run
+# Archivos y directorios a ignorar en Cloud Build
 .git
 .gitignore
 README.md
 .env
 .env.backup
+.env.local
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -20,3 +21,5 @@ bootstrap/cache/*
 !bootstrap/cache/.gitkeep
 .DS_Store
 Thumbs.db
+deploy-*.sh
+test-*.sh

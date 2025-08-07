@@ -1,0 +1,38 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/backend-cloud-run-mumlima:$COMMIT_SHA', '.']
+  
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/backend-cloud-run-mumlima:$COMMIT_SHA']
+  
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'backend-cloud-run-mumlima'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/backend-cloud-run-mumlima:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '1Gi'
+      - '--cpu'
+      - '1'
+      - '--timeout'
+      - '900'
+      - '--port'
+      - '8080'
+      - '--max-instances'
+      - '10'
+      - '--set-env-vars'
+      - 'APP_ENV=production,APP_DEBUG=false,LOG_CHANNEL=stderr,APP_NAME=Sistema Fiscalizacion,DB_CONNECTION=mysql,SESSION_DRIVER=cookie,CACHE_DRIVER=file,QUEUE_CONNECTION=sync'
+
+images:
+  - 'gcr.io/$PROJECT_ID/backend-cloud-run-mumlima:$COMMIT_SHA'

@@ -1,14 +1,14 @@
 # Usa una imagen oficial de PHP con Apache
 FROM php:8.2-apache
 
-# Instala extensiones y dependencias necesarias
+# Instala extensiones necesarias
 RUN apt-get update && apt-get install -y \
     libpng-dev libonig-dev libxml2-dev zip unzip curl git \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Habilita módulos necesarios de Apache
-RUN a2enmod rewrite headers deflate
+# Habilita mod_rewrite
+RUN a2enmod rewrite
 
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -17,42 +17,60 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 WORKDIR /var/www/html
 
-# Configura Laravel para Cloud Run
-RUN cp .env.example .env
-
-# Instala dependencias de PHP
+# Instala dependencias
 RUN composer install --no-dev --optimize-autoloader
 
-# Genera la clave de aplicación
-RUN php artisan key:generate
+# Configura Laravel para Cloud Run (sin .env file)
+RUN echo 'APP_NAME="Sistema Fiscalizacion"' > .env && \
+    echo 'APP_ENV=production' >> .env && \
+    echo 'APP_KEY=' >> .env && \
+    echo 'APP_DEBUG=false' >> .env && \
+    echo 'APP_URL=https://localhost' >> .env && \
+    echo 'LOG_CHANNEL=stderr' >> .env && \
+    echo 'LOG_LEVEL=info' >> .env && \
+    echo 'DB_CONNECTION=mysql' >> .env && \
+    echo 'DB_HOST=127.0.0.1' >> .env && \
+    echo 'DB_PORT=3306' >> .env && \
+    echo 'DB_DATABASE=laravel' >> .env && \
+    echo 'DB_USERNAME=root' >> .env && \
+    echo 'DB_PASSWORD=' >> .env && \
+    echo 'SESSION_DRIVER=cookie' >> .env && \
+    echo 'CACHE_DRIVER=file' >> .env && \
+    echo 'QUEUE_CONNECTION=sync' >> .env
 
-# Optimizaciones de Laravel para producción
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+RUN php artisan key:generate --force
 
-# Permisos correctos para Cloud Run
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+# Permisos
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Configura Apache para Cloud Run puerto 8080
+# Configura Apache para puerto 8080
 RUN echo "Listen 8080" > /etc/apache2/ports.conf
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Copia la configuración del VirtualHost
-COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
+# Configuración simple de VirtualHost
+RUN echo '<VirtualHost *:8080>\n\
+    DocumentRoot /var/www/html/public\n\
+    <Directory /var/www/html/public>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    ErrorLog /dev/stderr\n\
+    CustomLog /dev/stdout combined\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-# Verifica que la configuración sea válida
-RUN apache2ctl configtest
-
-# Debug: Muestra la configuración de puertos
-RUN echo "=== Configuración de Apache ===" && \
-    cat /etc/apache2/ports.conf && \
-    echo "=== VirtualHost ===" && \
-    head -10 /etc/apache2/sites-available/000-default.conf
-
-# Expone el puerto que Cloud Run espera
+# Expone puerto
 EXPOSE 8080
 
-# Comando para iniciar Apache
-CMD ["apache2-foreground"]
+# Script de inicio con debugging
+RUN echo '#!/bin/bash\n\
+set -e\n\
+echo "🚀 Iniciando aplicación en puerto 8080"\n\
+echo "📁 Verificando directorio public:"\n\
+ls -la /var/www/html/public/\n\
+echo "🔧 Configuración Apache:"\n\
+apache2ctl -S\n\
+echo "✅ Iniciando Apache..."\n\
+exec apache2-foreground' > /start.sh && chmod +x /start.sh
+
+CMD ["/start.sh"]
