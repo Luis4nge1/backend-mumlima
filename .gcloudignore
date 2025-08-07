@@ -1,0 +1,22 @@
+# Archivos y directorios a ignorar en Cloud Run
+.git
+.gitignore
+README.md
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+node_modules/
+.vscode/
+.idea/
+*.log
+tests/
+storage/logs/*
+!storage/logs/.gitkeep
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+.DS_Store
+Thumbs.db
