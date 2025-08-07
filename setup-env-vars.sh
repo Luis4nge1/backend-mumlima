@@ -3,8 +3,8 @@
 # Script para configurar variables de entorno en Cloud Run
 # Ejecutar después del primer deployment
 
-PROJECT_ID="certain-purpose-465906-k5"
-SERVICE_NAME="backend-cloud-4122"
+PROJECT_ID="name-project"
+SERVICE_NAME="name-service"
 REGION="us-central1"
 
 echo "🔧 Configurando variables de entorno en Cloud Run..."
@@ -19,7 +19,7 @@ APP_NAME=Laravel,
 APP_ENV=production,
 APP_KEY=base64:$APP_KEY,
 APP_DEBUG=false,
-APP_URL=https://backend-cloud-4122.us-central1.run.app,
+APP_URL=https://name-service.us-central1.run.app,
 LOG_CHANNEL=stderr,
 LOG_LEVEL=info,
 DB_CONNECTION=mysql,
