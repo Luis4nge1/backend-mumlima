@@ -35,13 +35,21 @@ RUN php artisan view:cache
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Configura Apache para Cloud Run
-COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
-
 # Configura Apache para Cloud Run puerto 8080
-RUN sed -i 's/80/8080/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
 RUN echo "Listen 8080" > /etc/apache2/ports.conf
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Copia la configuración del VirtualHost
+COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
+
+# Verifica que la configuración sea válida
+RUN apache2ctl configtest
+
+# Debug: Muestra la configuración de puertos
+RUN echo "=== Configuración de Apache ===" && \
+    cat /etc/apache2/ports.conf && \
+    echo "=== VirtualHost ===" && \
+    head -10 /etc/apache2/sites-available/000-default.conf
 
 # Expone el puerto que Cloud Run espera
 EXPOSE 8080
