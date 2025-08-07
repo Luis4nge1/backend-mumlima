@@ -1,8 +1,39 @@
 <?php
-// Simple health check endpoint for Cloud Run
-http_response_code(200);
-echo json_encode([
-    'status' => 'healthy',
-    'timestamp' => date('c'),
-    'service' => 'fiscalizacion-api'
-]);
+// Health check and debug endpoint for Cloud Run
+try {
+    // Test database connection
+    $dbStatus = 'unknown';
+    try {
+        $pdo = new PDO(
+            'mysql:host=' . ($_ENV['DB_HOST'] ?? '127.0.0.1') . ';port=' . ($_ENV['DB_PORT'] ?? '3306'),
+            $_ENV['DB_USERNAME'] ?? 'root',
+            $_ENV['DB_PASSWORD'] ?? ''
+        );
+        $dbStatus = 'connected';
+    } catch (Exception $e) {
+        $dbStatus = 'failed: ' . $e->getMessage();
+    }
+
+    http_response_code(200);
+    echo json_encode([
+        'status' => 'healthy',
+        'timestamp' => date('c'),
+        'service' => 'fiscalizacion-api',
+        'php_version' => PHP_VERSION,
+        'environment' => $_ENV['APP_ENV'] ?? 'unknown',
+        'database' => [
+            'connection' => $_ENV['DB_CONNECTION'] ?? 'unknown',
+            'host' => $_ENV['DB_HOST'] ?? 'unknown',
+            'status' => $dbStatus
+        ],
+        'app_key_set' => !empty($_ENV['APP_KEY']),
+        'debug_mode' => $_ENV['APP_DEBUG'] ?? 'false'
+    ], JSON_PRETTY_PRINT);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => $e->getMessage(),
+        'timestamp' => date('c')
+    ], JSON_PRETTY_PRINT);
+}

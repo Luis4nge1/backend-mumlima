@@ -4,7 +4,7 @@
 # Ejecutar después del primer deployment
 
 PROJECT_ID="certain-purpose-465906-k5"
-SERVICE_NAME="backend-cloud-run-mumlima"
+SERVICE_NAME="backend-cloud-4122"
 REGION="us-central1"
 
 echo "🔧 Configurando variables de entorno en Cloud Run..."
@@ -15,11 +15,11 @@ APP_KEY=$(openssl rand -base64 32)
 gcloud run services update $SERVICE_NAME \
   --region=$REGION \
   --set-env-vars="
-APP_NAME=Sistema Fiscalizacion,
+APP_NAME=Laravel,
 APP_ENV=production,
 APP_KEY=base64:$APP_KEY,
 APP_DEBUG=false,
-APP_URL=https://backend-cloud-run-mumlima-hash-uc.a.run.app,
+APP_URL=https://backend-cloud-4122.us-central1.run.app,
 LOG_CHANNEL=stderr,
 LOG_LEVEL=info,
 DB_CONNECTION=mysql,
