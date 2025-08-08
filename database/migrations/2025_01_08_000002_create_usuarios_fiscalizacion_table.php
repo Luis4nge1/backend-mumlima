@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('cellphone');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->foreignId('distribucion_id')->constrained('distribuciones')->onDelete('cascade');
+            $table->foreignId('entity_id')->nullable()->constrained('entities')->onDelete('set null');
             $table->timestamps();
         });
     }

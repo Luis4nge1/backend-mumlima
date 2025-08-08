@@ -35,6 +35,7 @@ class UpdateUsuarioFiscalizacionRequest extends FormRequest
             'cellphone' => 'sometimes|required|string|max:20',
             'status' => 'sometimes|in:active,inactive',
             'distribucion_id' => 'sometimes|required|exists:distribuciones,id',
+            'entity_id' => 'sometimes|nullable|exists:entities,id',
         ];
     }
 
@@ -52,6 +53,7 @@ class UpdateUsuarioFiscalizacionRequest extends FormRequest
             'status.in' => 'El estado debe ser active o inactive.',
             'distribucion_id.required' => 'La distribución es obligatoria.',
             'distribucion_id.exists' => 'La distribución seleccionada no existe.',
+            'entity_id.exists' => 'La entidad seleccionada no existe.',
         ];
     }
 }

@@ -14,24 +14,24 @@ class DistribucionSeeder extends Seeder
     {
         $distribuciones = [
             [
-                'name' => 'Distribución Norte',
-                'description' => 'Distribución que cubre la zona norte de la ciudad',
+                'name' => 'Macrozona Norte',
+                'description' => 'Macrozona que cubre la zona norte de la ciudad',
             ],
             [
-                'name' => 'Distribución Sur',
-                'description' => 'Distribución que cubre la zona sur de la ciudad',
+                'name' => 'Macrozona Sur',
+                'description' => 'Macrozona que cubre la zona sur de la ciudad',
             ],
             [
-                'name' => 'Distribución Este',
-                'description' => 'Distribución que cubre la zona este de la ciudad',
+                'name' => 'Macrozona Este',
+                'description' => 'Macrozona que cubre la zona este de la ciudad',
             ],
             [
-                'name' => 'Distribución Oeste',
-                'description' => 'Distribución que cubre la zona oeste de la ciudad',
+                'name' => 'Macrozona Oeste',
+                'description' => 'Macrozona que cubre la zona oeste de la ciudad',
             ],
             [
-                'name' => 'Distribución Centro',
-                'description' => 'Distribución que cubre el centro de la ciudad',
+                'name' => 'Macrozona Centro',
+                'description' => 'Macrozona que cubre el centro de la ciudad',
             ],
         ];
 

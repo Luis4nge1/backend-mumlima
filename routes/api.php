@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DistribucionController;
+use App\Http\Controllers\Api\EntityController;
+use App\Http\Controllers\Api\EntityTypeController;
 use App\Http\Controllers\Api\UsuarioFiscalizacionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +14,30 @@ use Illuminate\Support\Facades\Route;
 
 // Distribuciones routes
 Route::apiResource('distribuciones', DistribucionController::class);
+
+// Entity Types routes
+Route::apiResource('entity-types', EntityTypeController::class);
+
+// Entities routes
+Route::apiResource('entities', EntityController::class);
+
+// Additional entity routes
+Route::get('entities/hierarchy', [EntityController::class, 'hierarchy'])
+    ->name('entities.hierarchy');
+
+// Nested routes - usuarios by entity
+Route::get('entities/{entity}/usuarios', function (Request $request, $entityId) {
+    $query = \App\Models\UsuarioFiscalizacion::where('entity_id', $entityId);
+
+    if ($request->has('status')) {
+        $query->where('status', $request->get('status'));
+    }
+
+    $perPage = $request->get('per_page', 15);
+    $usuarios = $query->with(['distribucion', 'entity'])->paginate($perPage);
+
+    return \App\Http\Resources\UsuarioFiscalizacionResource::collection($usuarios);
+})->name('entities.usuarios');
 
 // Usuarios Fiscalizacion routes
 Route::apiResource('usuarios-fiscalizacion', UsuarioFiscalizacionController::class);

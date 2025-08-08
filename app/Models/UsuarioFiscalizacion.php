@@ -21,6 +21,7 @@ class UsuarioFiscalizacion extends Authenticatable
         'cellphone',
         'status',
         'distribucion_id',
+        'entity_id',
     ];
 
     protected $hidden = [
@@ -40,6 +41,14 @@ class UsuarioFiscalizacion extends Authenticatable
     public function distribucion(): BelongsTo
     {
         return $this->belongsTo(Distribucion::class, 'distribucion_id');
+    }
+
+    /**
+     * Get the entity that owns the usuario.
+     */
+    public function entity(): BelongsTo
+    {
+        return $this->belongsTo(Entity::class, 'entity_id');
     }
 
     /**

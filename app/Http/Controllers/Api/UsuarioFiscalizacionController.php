@@ -45,9 +45,19 @@ class UsuarioFiscalizacionController extends Controller
             $query->where('distribucion_id', $request->get('distribucion_id'));
         }
 
+        // Filter by entity
+        if ($request->has('entity_id')) {
+            $query->where('entity_id', $request->get('entity_id'));
+        }
+
         // Include distribucion
         if ($request->boolean('with_distribucion')) {
             $query->with('distribucion');
+        }
+
+        // Include entity
+        if ($request->boolean('with_entity')) {
+            $query->with('entity');
         }
 
         // Pagination
@@ -66,7 +76,7 @@ class UsuarioFiscalizacionController extends Controller
 
         return response()->json([
             'message' => 'Usuario creado exitosamente.',
-            'data' => new UsuarioFiscalizacionResource($usuario->load('distribucion'))
+            'data' => new UsuarioFiscalizacionResource($usuario->load(['distribucion', 'entity']))
         ], 201);
     }
 
@@ -80,8 +90,12 @@ class UsuarioFiscalizacionController extends Controller
             $usuarios_fiscalizacion->load('distribucion');
         }
 
+        if ($request->boolean('with_entity')) {
+            $usuarios_fiscalizacion->load('entity');
+        }
+
         return response()->json([
-            'data' => new UsuarioFiscalizacionResource($usuarios_fiscalizacion->load('distribucion'))
+            'data' => new UsuarioFiscalizacionResource($usuarios_fiscalizacion->load(['distribucion', 'entity']))
         ]);
     }
 
@@ -94,7 +108,7 @@ class UsuarioFiscalizacionController extends Controller
 
         return response()->json([
             'message' => 'Usuario actualizado exitosamente.',
-            'data' => new UsuarioFiscalizacionResource($usuarios_fiscalizacion->load('distribucion'))
+            'data' => new UsuarioFiscalizacionResource($usuarios_fiscalizacion->load(['distribucion', 'entity']))
         ]);
     }
 
@@ -135,7 +149,7 @@ class UsuarioFiscalizacionController extends Controller
 
         return response()->json([
             'message' => 'Perfil actualizado exitosamente.',
-            'data' => new UsuarioFiscalizacionResource($usuarioFiscalizacion->load('distribucion'))
+            'data' => new UsuarioFiscalizacionResource($usuarioFiscalizacion->load(['distribucion', 'entity']))
         ]);
     }
 
@@ -161,7 +175,7 @@ class UsuarioFiscalizacionController extends Controller
 
         return response()->json([
             'message' => 'Contraseña actualizada exitosamente.',
-            'data' => new UsuarioFiscalizacionResource($usuarioFiscalizacion->load('distribucion'))
+            'data' => new UsuarioFiscalizacionResource($usuarioFiscalizacion->load(['distribucion', 'entity']))
         ]);
     }
 
@@ -177,7 +191,7 @@ class UsuarioFiscalizacionController extends Controller
 
         return response()->json([
             'message' => 'Contraseña restablecida exitosamente por el administrador.',
-            'data' => new UsuarioFiscalizacionResource($usuarioFiscalizacion->load('distribucion')),
+            'data' => new UsuarioFiscalizacionResource($usuarioFiscalizacion->load(['distribucion', 'entity'])),
             'admin_action' => true
         ]);
     }
@@ -212,7 +226,7 @@ class UsuarioFiscalizacionController extends Controller
 
         return response()->json([
             'message' => 'Login exitoso.',
-            'data' => new UsuarioFiscalizacionResource($usuario->load('distribucion'))
+            'data' => new UsuarioFiscalizacionResource($usuario->load(['distribucion', 'entity']))
         ]);
     }
 }

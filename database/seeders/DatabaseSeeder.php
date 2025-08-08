@@ -20,9 +20,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        // Seed distribuciones and usuarios fiscalizacion
+        // Seed distribuciones, entity types, entities and usuarios fiscalizacion
         $this->call([
             DistribucionSeeder::class,
+            EntityTypeSeeder::class,
+            EntitySeeder::class,
             UsuarioFiscalizacionSeeder::class,
         ]);
     }

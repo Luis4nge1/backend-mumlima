@@ -19,7 +19,9 @@ class UsuarioFiscalizacionResource extends JsonResource
             'cellphone' => $this->cellphone,
             'status' => $this->status,
             'distribucion_id' => $this->distribucion_id,
+            'entity_id' => $this->entity_id,
             'distribucion' => new DistribucionResource($this->whenLoaded('distribucion')),
+            'entity' => new EntityResource($this->whenLoaded('entity')),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];
